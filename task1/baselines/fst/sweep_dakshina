@@ -10,7 +10,7 @@ readonly RANDOM_STARTS=25
 mkdir -p checkpoints-dakshina
 mkdir -p ${DATA}
 
-python disambiguate --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 --output-path-prefix ${DATA}
+python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 --output-path-prefix ${DATA}
 
 for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
     DEV_TSV="${TRAIN_TSV//train/dev}"
