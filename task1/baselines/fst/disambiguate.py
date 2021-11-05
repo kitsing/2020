@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 def main():
-    from os import mkdir
+    import os
     from argparse import ArgumentParser
     from glob import glob
     parser = ArgumentParser()
@@ -17,7 +17,9 @@ def main():
 
     for lang in langids:
         for chunk in chunks:
-            mkdir(f'{args.output_path_prefix}/{chunk}')
+            import os
+            if not os.path.exists(f'{args.output_path_prefix}/{chunk}/'):
+                os.makedirs(f'{args.output_path_prefix}/{chunk}/')
             fname = f'{args.input_path_prefix}/{lang}/lexicons/{lang}.translit.sampled.{chunk}.tsv'
             output_fname = f'{args.output_path_prefix}/{chunk}/{lang}_{chunk}.tsv'
             buffer = []
