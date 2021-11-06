@@ -15,12 +15,11 @@ readonly FLAGS=(
     "input_token_type"
     "output_path"
     "output_token_type"
-    "invert"
 )
 readonly LONGOPTS_STRING="$(printf "%s:," "${FLAGS[@]}")"
 readonly OPTS=$(getopt                 \
     --name "$(basename "$0")"          \
-    --options ""                       \
+    --options "i"                       \
     --longoptions "${LONGOPTS_STRING}" \
     -- "$@")
 eval set --${OPTS}
@@ -46,10 +45,9 @@ while [ $# -gt 0 ]; do
             OUTPUT_TOKEN_TYPE="$2"
             shift 2
             ;;
-        --invert)
+        -i)
             INVERT_FLAG=" --invert"
             CUT_FLAG="-f2"
-            shift 1
             ;;
         *)
             break
