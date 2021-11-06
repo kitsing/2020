@@ -386,6 +386,8 @@ def main(args: argparse.Namespace) -> None:
         args.fst_default_cache_gc,
         args.fst_default_cache_gc_limit,
     )
+    from os import system
+    system(f'mv {aligner.c_path} {args.covering_path}')
 
 
 if __name__ == "__main__":
@@ -443,4 +445,6 @@ if __name__ == "__main__":
     parser.add_argument("--max_iters", type=int)
     parser.add_argument("--fst_default_cache_gc")
     parser.add_argument("--fst_default_cache_gc_limit")
+    parser.add_argument("--max_iters")
+    parser.add_argument("--covering_path")
     main(parser.parse_args())

@@ -1,4 +1,6 @@
 #!/bin/bash
+PREFIX_DIR=./postprocessing
+mkdir -p ${PREFIX_DIR}
 
 set -eou pipefail
 
@@ -9,38 +11,41 @@ readonly RANDOM_STARTS=25
 mkdir -p checkpoints
 
 for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
+# for TRAIN_TSV in "${DATA}/train/"*jpn*"_train.tsv"; do
     DEV_TSV="${TRAIN_TSV//train/dev}"
     TEST_TSV="${TRAIN_TSV//train/test}"
     LANGUAGE="$(basename $TRAIN_TSV _train.tsv)"
     # Output symbols.
     cut -f2 "${TRAIN_TSV}" "${DEV_TSV}" \
         | ngramsymbols \
-        > "${LANGUAGE}_phones.sym"
+        > "${PREFIX_DIR}/${LANGUAGE}_phones.sym"
     # Alignments.
     ./align.py \
         --seed="${SEED}" \
         --random_starts="${RANDOM_STARTS}" \
         --tsv_path="${TRAIN_TSV}" \
-        --output_token_type="${LANGUAGE}_phones.sym" \
-        --encoder_path="${LANGUAGE}.enc" \
-        --far_path="${LANGUAGE}.far"
+        --output_token_type="${PREFIX_DIR}/${LANGUAGE}_phones.sym" \
+        --encoder_path="${PREFIX_DIR}/${LANGUAGE}.enc" \
+        --covering_path="${PREFIX_DIR}/${LANGUAGE}.covering.fst" \
+        --far_path="${PREFIX_DIR}/${LANGUAGE}.far"
     # Loops over LM orders from 3 (trigram) to 9. 
-    for ORDER in $(seq 3 9); do
+    # for ORDER in $(seq 3 9); do
+    for ORDER in $(seq 3 2); do
         # NGram model.
         ./model \
-            --encoder_path="${LANGUAGE}.enc" \
-            --far_path="${LANGUAGE}.far" \
+            --encoder_path="${PREFIX_DIR}/${LANGUAGE}.enc" \
+            --far_path="${PREFIX_DIR}/${LANGUAGE}.far" \
             --fst_path="checkpoints/${LANGUAGE}-${ORDER}.fst" \
             --order="${ORDER}"
         # Evaluation.
         ./predict \
             --input_path="${DEV_TSV}" \
             --fst_path="checkpoints/${LANGUAGE}-${ORDER}.fst" \
-            --output_token_type="${LANGUAGE}_phones.sym" \
-            --output_path="${LANGUAGE}.txt"
+            --output_token_type="${PREFIX_DIR}/${LANGUAGE}_phones.sym" \
+            --output_path="${PREFIX_DIR}/${LANGUAGE}.txt"
         ./evaluate \
             --gold_path="${DEV_TSV}" \
-            --hypo_path="${LANGUAGE}.txt" \
+            --hypo_path="${PREFIX_DIR}/${LANGUAGE}.txt" \
             > "checkpoints/${LANGUAGE}-${ORDER}-dev.res"
         ./predict \
             --input_path="${TEST_TSV}" \
@@ -52,8 +57,8 @@ for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
             --hypo_path="${LANGUAGE}.txt" \
             > "checkpoints/${LANGUAGE}-${ORDER}-test.res"
     done
-    rm "${LANGUAGE}_phones.sym" \
-        "${LANGUAGE}.enc" \
-        "${LANGUAGE}.far" \
-        "${LANGUAGE}.txt"
+    # rm "${LANGUAGE}_phones.sym" \
+    #     "${LANGUAGE}.enc" \
+    #     "${LANGUAGE}.far" \
+    # rm    "${PREFIX_DIR}/${LANGUAGE}.txt"
 done
