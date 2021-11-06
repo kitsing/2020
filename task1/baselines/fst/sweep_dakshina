@@ -77,7 +77,7 @@ for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
             --output_path="${LANGUAGE}.txt.invert"
         ./evaluate \
             --gold_path="${TEST_TSV}" \
-            --hypo_path="${LANGUAGE}.txt" \
+            --hypo_path="${LANGUAGE}.txt.invert" \
             -i \
             > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-test.inv.res"
     done
