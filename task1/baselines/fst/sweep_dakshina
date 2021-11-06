@@ -22,40 +22,63 @@ for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
         > "${LANGUAGE}_phones.sym"
     # Alignments.
 
-    python ./align.py \
-        --seed="${SEED}" \
-        --random_starts="${RANDOM_STARTS}" \
-        --tsv_path="${TRAIN_TSV}" \
-        --output_token_type="${LANGUAGE}_phones.sym" \
-        --encoder_path="${LANGUAGE}.enc" \
-        --far_path="${LANGUAGE}.far"
+#    python ./align.py \
+#        --seed="${SEED}" \
+#        --random_starts="${RANDOM_STARTS}" \
+#        --tsv_path="${TRAIN_TSV}" \
+#        --output_token_type="${LANGUAGE}_phones.sym" \
+#        --encoder_path="${LANGUAGE}.enc" \
+#        --far_path="${LANGUAGE}.far"
     # Loops over LM orders from 3 (trigram) to 9. 
     for ORDER in $(seq 3 9); do
         # NGram model.
-        ./model \
-            --encoder_path="${LANGUAGE}.enc" \
-            --far_path="${LANGUAGE}.far" \
-            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
-            --order="${ORDER}"
+#        ./model \
+#            --encoder_path="${LANGUAGE}.enc" \
+#            --far_path="${LANGUAGE}.far" \
+#            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
+#            --order="${ORDER}"
         # Evaluation.
+#        ./predict \
+#            --input_path="${DEV_TSV}" \
+#            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
+#            --output_token_type="${LANGUAGE}_phones.sym" \
+#            --output_path="${LANGUAGE}.txt"
+#
+#        ./evaluate \
+#            --gold_path="${DEV_TSV}" \
+#            --hypo_path="${LANGUAGE}.txt" \
+#            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-dev.res"
+#        ./predict \
+#            --input_path="${TEST_TSV}" \
+#            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
+#            --output_token_type="${LANGUAGE}_phones.sym" \
+#            --output_path="${LANGUAGE}.txt"
+#        ./evaluate \
+#            --gold_path="${TEST_TSV}" \
+#            --hypo_path="${LANGUAGE}.txt" \
+#            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-test.res"
+
         ./predict \
             --input_path="${DEV_TSV}" \
             --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
-            --output_token_type="${LANGUAGE}_phones.sym" \
-            --output_path="${LANGUAGE}.txt"
+            --input_token_type="${LANGUAGE}_phones.sym" \
+            --output_path="${LANGUAGE}.txt.invert" \
+            -i
         ./evaluate \
             --gold_path="${DEV_TSV}" \
-            --hypo_path="${LANGUAGE}.txt" \
-            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-dev.res"
+            --hypo_path="${LANGUAGE}.txt.invert" \
+            -i \
+            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-dev.inv.res"
         ./predict \
             --input_path="${TEST_TSV}" \
             --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
             --output_token_type="${LANGUAGE}_phones.sym" \
-            --output_path="${LANGUAGE}.txt"
+            --output_path="${LANGUAGE}.txt.invert"
         ./evaluate \
             --gold_path="${TEST_TSV}" \
             --hypo_path="${LANGUAGE}.txt" \
-            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-test.res"
+            -i \
+            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-test.inv.res"
     done
     rm "${LANGUAGE}_phones.sym" \
         "${LANGUAGE}.enc" \

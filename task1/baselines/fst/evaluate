@@ -16,7 +16,7 @@ readonly FLAGS=(
 readonly LONGOPTS_STRING="$(printf "%s:," "${FLAGS[@]}")"
 readonly OPTS=$(getopt                 \
     --name "$(basename "$0")"          \
-    --options ""                       \
+    --options "i"                      \
     --longoptions "${LONGOPTS_STRING}" \
     -- "$@")
 eval set --${OPTS}
@@ -30,15 +30,21 @@ while [ $# -gt 0 ]; do
             HYPO_PATH="$2"
             shift 2
             ;;
+        -i)
+            CUT_FLAG="-f1"
+            shift 1
+            ;;
         *)
             break
             ;;
     esac
 done
 
+readonly CUT_FLAG="${CUT_FLAG:-f2}"
+
 main() {
     local -r EVALUATE_PATH="$(mktemp -u -t evaluate.XXXXXX.$$.tsv)"
-    paste <(cut -f2 ${GOLD_PATH}) <(cut -f2 ${HYPO_PATH}) > "${EVALUATE_PATH}"
+    paste <(cut ${CUT_FLAG} ${GOLD_PATH}) <(cut ${CUT_FLAG} ${HYPO_PATH}) > "${EVALUATE_PATH}"
     # We hide the "incorrect predictions" logging.
     ../../evaluation/./evaluate.py "${EVALUATE_PATH}" 2>/dev/null
     rm -f "${EVALUATE_PATH}"
