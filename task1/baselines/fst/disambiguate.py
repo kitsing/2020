@@ -28,8 +28,9 @@ def main():
                     splitted = l.split('\t')
                     assert len(splitted) == 3
                     times = int(splitted[2])
+                    space_delimited_romanization = ' '.join(splitted[1])
                     for _ in range(times):
-                        buffer.append(f'{splitted[0]}\t{splitted[1]}\n')
+                        buffer.append(f'{splitted[0]}\t{space_delimited_romanization}\n')
             if args.shuffle:
                 import numpy as np
                 rng = np.random.default_rng(args.seed)

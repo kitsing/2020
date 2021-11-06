@@ -258,7 +258,7 @@ class PairNGramAligner:
                 line = line.rstrip()
                 match = re.match(r"INFO: Iteration \d+: (-?\d*(\.\d*)?)", line)
                 assert match, line
-                likelihood = float(match.group(1))
+                likelihood = - float(match.group(1))
         logging.info(
             "Random start %d; likelihood: %f; time elapsed: %ds",
             random_start.idx,
@@ -445,6 +445,5 @@ if __name__ == "__main__":
     parser.add_argument("--max_iters", type=int)
     parser.add_argument("--fst_default_cache_gc")
     parser.add_argument("--fst_default_cache_gc_limit")
-    parser.add_argument("--max_iters")
     parser.add_argument("--covering_path")
     main(parser.parse_args())

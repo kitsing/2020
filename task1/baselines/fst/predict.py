@@ -50,7 +50,10 @@ def _reader(path: str) -> Iterator[str]:
 def main(args: argparse.Namespace) -> None:
     fst = pynini.Fst.read(args.fst_path)
     if args.invert:
+        from sys import stderr
+        print('inverting', file=stderr)
         fst.invert()
+        print('inverted', file=stderr)
     input_token_type = (
         args.input_token_type
         if args.input_token_type in TOKEN_TYPES

@@ -48,6 +48,7 @@ while [ $# -gt 0 ]; do
         -i)
             INVERT_FLAG=" --invert"
             CUT_FLAG="-f2"
+            shift 1
             ;;
         *)
             break
@@ -63,7 +64,9 @@ readonly CUT_FLAG="${CUT_FLAG:-f1}"
 
 main() {
     local -r WORDS_PATH="$(mktemp -u -t words.XXXXXX.$$.txt)"
+    echo "cutting"
     cut ${CUT_FLAG} "${INPUT_PATH}" > "${WORDS_PATH}"
+    echo "predicting"
     ./predict.py                                   \
         --fst_path="${FST_PATH}"                   \
         --input_token_type="${INPUT_TOKEN_TYPE}"   \
