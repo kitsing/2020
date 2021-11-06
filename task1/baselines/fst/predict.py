@@ -49,6 +49,8 @@ def _reader(path: str) -> Iterator[str]:
 
 def main(args: argparse.Namespace) -> None:
     fst = pynini.Fst.read(args.fst_path)
+    if args.invert:
+        fst.invert()
     input_token_type = (
         args.input_token_type
         if args.input_token_type in TOKEN_TYPES
@@ -78,6 +80,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--fst_path", required=True, help="path to rewrite fst FST"
     )
+    parser.add_argument('--invert', action='store_true')
     parser.add_argument(
         "--cores",
         type=int,
