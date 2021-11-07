@@ -12,7 +12,8 @@ mkdir -p ${DATA}
 
 # python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 --output-path-prefix ${DATA}
 
-for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
+#for TRAIN_TSV in "${DATA}/train/"{bn,gu,hi,kn,ml,mr,pa,sd,si,ta,te,ur}"_train.tsv"; do
+for TRAIN_TSV in "${DATA}/train/"{gu,hi,kn,ml,mr,pa,sd,si,ta,te,ur}"_train.tsv"; do
     DEV_TSV="${TRAIN_TSV//train/dev}"
     TEST_TSV="${TRAIN_TSV//train/test}"
     LANGUAGE="$(basename $TRAIN_TSV _train.tsv)"
