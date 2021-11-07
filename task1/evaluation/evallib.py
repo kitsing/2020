@@ -46,7 +46,7 @@ def score(gold: Labels, hypo: Labels) -> Tuple[int, int]:
     return (edits, len(gold))
 
 
-def tsv_reader(path: str) -> Iterator[Tuple[Labels, Labels]]:
+def tsv_reader(path: str, no_space: bool = False) -> Iterator[Tuple[Labels, Labels]]:
     """Reads pairs of strings from a TSV filepath."""
     with open(path, "r") as source:
         for line in source:
@@ -54,4 +54,7 @@ def tsv_reader(path: str) -> Iterator[Tuple[Labels, Labels]]:
             # Stripping is performed after the fact so the previous line
             # doesn't fail when `hypo` is null.
             hypo = hypo.rstrip()
-            yield (gold.split(), hypo.split())
+            if no_space:
+                yield (gold, hypo)
+            else:
+                yield (gold.split(), hypo.split())

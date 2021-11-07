@@ -32,6 +32,7 @@ while [ $# -gt 0 ]; do
             ;;
         -i)
             CUT_FLAG="-f1"
+            NO_SPACE_FLAG=" --no-space"
             shift 1
             ;;
         *)
@@ -41,12 +42,13 @@ while [ $# -gt 0 ]; do
 done
 
 readonly CUT_FLAG="${CUT_FLAG:-f2}"
+readonly NO_SPACE_FLAG="${NO_SPACE_FLAG:}"
 
 main() {
     local -r EVALUATE_PATH="$(mktemp -u -t evaluate.XXXXXX.$$.tsv)"
     paste <(cut ${CUT_FLAG} ${GOLD_PATH}) <(cut ${CUT_FLAG} ${HYPO_PATH}) > "${EVALUATE_PATH}"
     # We hide the "incorrect predictions" logging.
-    ../../evaluation/./evaluate.py "${EVALUATE_PATH}" 2>/dev/null
+    ../../evaluation/./evaluate.py "${NO_SPACE_FLAG}" "${EVALUATE_PATH}" 2>/dev/null
     rm -f "${EVALUATE_PATH}"
 }
 
