@@ -38,7 +38,7 @@ def main(args: argparse.Namespace) -> None:
 if __name__ == "__main__":
     logging.basicConfig(level="INFO", format="%(levelname)s: %(message)s")
     parser = argparse.ArgumentParser(description="Evaluates sequence model")
-    parser.add_argument("tsv_path", help="path to gold/hypo TSV file")
+    parser.add_argument("--tsv-path", help="path to gold/hypo TSV file", required=True)
     parser.add_argument('--no-space', action='store_true')
     parser.add_argument(
         "--cores",

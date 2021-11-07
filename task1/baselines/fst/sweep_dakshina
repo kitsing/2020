@@ -72,7 +72,7 @@ for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
         ./predict \
             --input_path="${TEST_TSV}" \
             --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
-            --output_token_type="${LANGUAGE}_phones.sym" \
+            --input_token_type="${LANGUAGE}_phones.sym" \
             -i \
             --output_path="${LANGUAGE}.txt.test.invert"
         ./evaluate \
