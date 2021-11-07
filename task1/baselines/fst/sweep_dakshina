@@ -74,10 +74,10 @@ for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
             --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
             --output_token_type="${LANGUAGE}_phones.sym" \
             -i \
-            --output_path="${LANGUAGE}.txt.invert"
+            --output_path="${LANGUAGE}.txt.test.invert"
         ./evaluate \
             --gold_path="${TEST_TSV}" \
-            --hypo_path="${LANGUAGE}.txt.invert" \
+            --hypo_path="${LANGUAGE}.txt.test.invert" \
             -i \
             > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-test.inv.res"
     done
