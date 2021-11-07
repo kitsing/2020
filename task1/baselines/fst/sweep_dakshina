@@ -85,5 +85,6 @@ for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
     rm "${LANGUAGE}_phones.sym" \
         "${LANGUAGE}.enc" \
         "${LANGUAGE}.far" \
-        "${LANGUAGE}.txt"
+        "${LANGUAGE}.txt.invert" \
+        "${LANGUAGE}.txt.test.invert"
 done
