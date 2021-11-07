@@ -20,6 +20,8 @@ readonly OPTS=$(getopt                 \
     --longoptions "${LONGOPTS_STRING}" \
     -- "$@")
 eval set --${OPTS}
+NO_SPACE_FLAG=""
+CUT_FLAG="-f2"
 while [ $# -gt 0 ]; do
     case "$1" in
         --gold_path)
@@ -40,9 +42,6 @@ while [ $# -gt 0 ]; do
             ;;
     esac
 done
-
-readonly CUT_FLAG="${CUT_FLAG:-f2}"
-readonly NO_SPACE_FLAG="${NO_SPACE_FLAG:}"
 
 main() {
     local -r EVALUATE_PATH="$(mktemp -u -t evaluate.XXXXXX.$$.tsv)"
