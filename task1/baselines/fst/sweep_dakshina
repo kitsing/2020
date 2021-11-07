@@ -5,7 +5,7 @@ set -eou pipefail
 readonly SEED=1917
 readonly DAKSHINA_DATA=/export/b08/kitsing/dakshina/dakshina_dataset_v1.0
 readonly DATA=../../data_dakshina
-readonly RANDOM_STARTS=25
+readonly RANDOM_STARTS=1
 
 mkdir -p checkpoints-dakshina
 mkdir -p ${DATA}
@@ -22,21 +22,22 @@ for TRAIN_TSV in "${DATA}/train/"*"_train.tsv"; do
         > "${LANGUAGE}_phones.sym"
     # Alignments.
 
-#    python ./align.py \
-#        --seed="${SEED}" \
-#        --random_starts="${RANDOM_STARTS}" \
-#        --tsv_path="${TRAIN_TSV}" \
-#        --output_token_type="${LANGUAGE}_phones.sym" \
-#        --encoder_path="${LANGUAGE}.enc" \
-#        --far_path="${LANGUAGE}.far"
+    python ./align_dakshina.py \
+        --seed="${SEED}" \
+        --random_starts="${RANDOM_STARTS}" \
+        --tsv_path="${TRAIN_TSV}" \
+        --output_token_type="${LANGUAGE}_phones.sym" \
+        --encoder_path="${LANGUAGE}.enc" \
+        --far_path="${LANGUAGE}.far"
     # Loops over LM orders from 3 (trigram) to 9. 
     for ORDER in $(seq 3 9); do
         # NGram model.
-#        ./model \
-#            --encoder_path="${LANGUAGE}.enc" \
-#            --far_path="${LANGUAGE}.far" \
-#            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
-#            --order="${ORDER}"
+        ./model \
+            --encoder_path="${LANGUAGE}.enc" \
+            --far_path="${LANGUAGE}.far" \
+            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
+            --smoothing_method="witten_bell" \
+            --order="${ORDER}"
         # Evaluation.
 #        ./predict \
 #            --input_path="${DEV_TSV}" \

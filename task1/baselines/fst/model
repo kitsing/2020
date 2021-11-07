@@ -71,7 +71,7 @@ readonly SMOOTHING_METHOD="${SMOOTHING_METHOD:-kneser_ney}"
 
 main() {
     ngramcount --require_symbols=false --order="${ORDER}" "${FAR_PATH}" | \
-        ngrammake --method="${SMOOTHING_METHOD}" - | \
+        ngrammake --method="${SMOOTHING_METHOD}" --witten_bell_k=15 - | \
         ngramshrink \
             --method="${PRUNING_METHOD}" \
             --target_number_of_ngrams="${MODEL_SIZE}" \
