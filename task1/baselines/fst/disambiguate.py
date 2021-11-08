@@ -42,7 +42,7 @@ def main():
 
             with open(output_fname_unrepeated, mode='w') as t_fh:
                 for l in unrepeated_buffer:
-                    fh.write(l)
+                    t_fh.write(l)
 
             with open(output_fname, mode='w') as fh:
                 for l in buffer:
