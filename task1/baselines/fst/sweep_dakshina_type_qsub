@@ -11,11 +11,11 @@ conda activate task1
 
 set -eou pipefail
 
-readonly SEED=1917
 readonly DAKSHINA_DATA=/export/b08/kitsing/dakshina/dakshina_dataset_v1.0
 readonly DATA=../../data_dakshina
 readonly RANDOM_STARTS=1
 readonly LANG=${1}
+readonly SEED=${2}
 mkdir -p checkpoints-dakshina
 mkdir -p ${DATA}
 
@@ -23,7 +23,9 @@ python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 
 
 #for TRAIN_TSV in "${DATA}/train/"{bn,gu,hi,kn,ml,mr,pa,sd,si,ta,te,ur}"_train.tsv"; do
 # for TRAIN_TSV in "${DATA}/train/${LANG}_train.tsv"; do
-    TRAIN_TSV="${DATA}/train/${LANG}_train.tsv"
+    # match training with dev/test distributions
+    TRAIN_TSV="${DATA}/train/${LANG}_train.type.tsv"
+    # TRAIN_TSV="${DATA}/train/${LANG}_train.type.tsv"
     DEV_TSV="${DATA}/dev/${LANG}_dev.type.tsv"
     TEST_TSV="${DATA}/test/${LANG}_test.type.tsv"
     LANGUAGE="$(basename $TRAIN_TSV _train.tsv)"
@@ -39,14 +41,14 @@ python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 
         --tsv_path="${TRAIN_TSV}" \
         --output_token_type="${LANGUAGE}_phones.sym" \
         --encoder_path="${LANGUAGE}.enc" \
-        --far_path="${LANGUAGE}.far"
+        --far_path="${LANGUAGE}.${SEED}.far"
     # Loops over LM orders from 3 (trigram) to 9. 
     for ORDER in $(seq 3 9); do
         # NGram model.
         ./model \
             --encoder_path="${LANGUAGE}.enc" \
             --far_path="${LANGUAGE}.far" \
-            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
+            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.type.${SEED}.fst" \
             --smoothing_method="witten_bell" \
             --order="${ORDER}"
         # Evaluation.
@@ -72,30 +74,30 @@ python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 
 
         ./predict \
             --input_path="${DEV_TSV}" \
-            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
+            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.type.${SEED}.fst" \
             --input_token_type="${LANGUAGE}_phones.sym" \
-            --output_path="${LANGUAGE}.txt.type.invert" \
+            --output_path="${LANGUAGE}.txt.type.${SEED}.invert" \
             -i
         ./evaluate \
             --gold_path="${DEV_TSV}" \
-            --hypo_path="${LANGUAGE}.txt.type.invert" \
+            --hypo_path="${LANGUAGE}.txt.type.${SEED}.invert" \
             -i \
-            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-dev.type.inv.res"
+            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-dev.type.${SEED}.inv.res"
         ./predict \
             --input_path="${TEST_TSV}" \
             --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
             --input_token_type="${LANGUAGE}_phones.sym" \
             -i \
-            --output_path="${LANGUAGE}.txt.type.test.invert"
+            --output_path="${LANGUAGE}.txt.type.${SEED}.test.invert"
         ./evaluate \
             --gold_path="${TEST_TSV}" \
-            --hypo_path="${LANGUAGE}.txt.type.test.invert" \
+            --hypo_path="${LANGUAGE}.txt.type.${SEED}.test.invert" \
             -i \
-            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-test.type.inv.res"
+            > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-test.type.${SEED}.inv.res"
     done
     rm "${LANGUAGE}_phones.sym" \
         "${LANGUAGE}.enc" \
-        "${LANGUAGE}.far" \
-        "${LANGUAGE}.txt.type.invert" \
-        "${LANGUAGE}.txt.type.test.invert"
+        "${LANGUAGE}.${SEED}.far" \
+        "${LANGUAGE}.txt.type.${SEED}.invert" \
+        "${LANGUAGE}.txt.type.${SEED}.test.invert"
 # done
