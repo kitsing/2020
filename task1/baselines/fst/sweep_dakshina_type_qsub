@@ -40,14 +40,14 @@ python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 
         --random_starts="${RANDOM_STARTS}" \
         --tsv_path="${TRAIN_TSV}" \
         --output_token_type="${LANGUAGE}_phones.sym" \
-        --encoder_path="${LANGUAGE}.enc" \
+        --encoder_path="${LANGUAGE}.${SEED}.enc" \
         --far_path="${LANGUAGE}.${SEED}.far"
     # Loops over LM orders from 3 (trigram) to 9. 
     for ORDER in $(seq 3 9); do
         # NGram model.
         ./model \
-            --encoder_path="${LANGUAGE}.enc" \
-            --far_path="${LANGUAGE}.far" \
+            --encoder_path="${LANGUAGE}.${SEED}.enc" \
+            --far_path="${LANGUAGE}.${SEED}.far" \
             --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.type.${SEED}.fst" \
             --smoothing_method="witten_bell" \
             --order="${ORDER}"
@@ -96,7 +96,7 @@ python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 
             > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-test.type.${SEED}.inv.res"
     done
     rm "${LANGUAGE}_phones.sym" \
-        "${LANGUAGE}.enc" \
+        "${LANGUAGE}.${SEED}.enc" \
         "${LANGUAGE}.${SEED}.far" \
         "${LANGUAGE}.txt.type.${SEED}.invert" \
         "${LANGUAGE}.txt.type.${SEED}.test.invert"
