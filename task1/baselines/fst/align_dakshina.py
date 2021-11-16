@@ -99,8 +99,8 @@ class PairNGramAligner:
         pywrapfst.convert, fst_type="compact_string"
     )
 
-    def __init__(self) -> None:
-        self.tempdir = tempfile.TemporaryDirectory()
+    def __init__(self, prefix) -> None:
+        self.tempdir = tempfile.TemporaryDirectory(prefix=prefix)
         self.g_path = os.path.join(self.tempdir.name, "g.far")
         self.p_path = os.path.join(self.tempdir.name, "p.far")
         self.c_path = os.path.join(self.tempdir.name, "c.fst")
@@ -199,7 +199,11 @@ class PairNGramAligner:
         with open(tsv_path, "r") as source:
             for (linenum, line) in enumerate(source, 1):
                 key = f"{linenum:08x}"
-                (g, p) = line.rstrip().split("\t", 1)
+                try:
+                    (g, p) = line.rstrip().split("\t", 1)
+                except Exception as e:
+                    logging.error(f'{tsv_path}\t{line_num}\t{line}')
+                    raise e
                 # For both G and P, we compile a FSA, store the labels, and
                 # then write the compact version to the FAR.
                 g_fst = pynini.accep(g, token_type=input_token_type)
@@ -361,7 +365,7 @@ class PairNGramAligner:
 
 
 def main(args: argparse.Namespace) -> None:
-    aligner = PairNGramAligner()
+    aligner = PairNGramAligner(prefix=argparse.prefix)
     input_token_type = (
         args.input_token_type
         if args.input_token_type in TOKEN_TYPES
@@ -450,4 +454,5 @@ if __name__ == "__main__":
     parser.add_argument("--fst_default_cache_gc")
     parser.add_argument("--fst_default_cache_gc_limit")
     parser.add_argument("--covering_path")
+    parser.add_argument("--prefix", type=str)
     main(parser.parse_args())

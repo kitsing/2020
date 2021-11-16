@@ -19,6 +19,8 @@ readonly SEED=${2}
 mkdir -p checkpoints-dakshina
 mkdir -p ${DATA}
 
+echo "LANG: ${LANG}  SEED: ${SEED}"
+
 python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 --output-path-prefix ${DATA}
 
 #for TRAIN_TSV in "${DATA}/train/"{bn,gu,hi,kn,ml,mr,pa,sd,si,ta,te,ur}"_train.tsv"; do
