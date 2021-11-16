@@ -39,7 +39,7 @@ python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 
         --seed="${SEED}" \
         --random_starts="${RANDOM_STARTS}" \
         --tsv_path="${TRAIN_TSV}" \
-        --output_token_type="${LANGUAGE}_phones.sym" \
+        --output_token_type="${LANGUAGE}.${SEED}.phones.sym" \
         --encoder_path="${LANGUAGE}.${SEED}.enc" \
         --far_path="${LANGUAGE}.${SEED}.far"
     # Loops over LM orders from 3 (trigram) to 9. 
@@ -75,29 +75,29 @@ python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 
         ./predict \
             --input_path="${DEV_TSV}" \
             --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.type.${SEED}.fst" \
-            --input_token_type="${LANGUAGE}_phones.sym" \
-            --output_path="${LANGUAGE}.txt.type.${SEED}.invert" \
+            --input_token_type="${LANGUAGE}.${SEED}.phones.sym" \
+            --output_path="${LANGUAGE}-${ORDER}.txt.type.${SEED}.dev.invert" \
             -i
         ./evaluate \
             --gold_path="${DEV_TSV}" \
-            --hypo_path="${LANGUAGE}.txt.type.${SEED}.invert" \
+            --hypo_path="${LANGUAGE}-${ORDER}.txt.type.${SEED}.dev.invert" \
             -i \
             > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-dev.type.${SEED}.inv.res"
         ./predict \
             --input_path="${TEST_TSV}" \
-            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
-            --input_token_type="${LANGUAGE}_phones.sym" \
+            --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.type.${SEED}.fst" \
+            --input_token_type="${LANGUAGE}.${SEED}.phones.sym" \
             -i \
-            --output_path="${LANGUAGE}.txt.type.${SEED}.test.invert"
+            --output_path="${LANGUAGE}-${ORDER}.txt.type.${SEED}.test.invert"
         ./evaluate \
             --gold_path="${TEST_TSV}" \
-            --hypo_path="${LANGUAGE}.txt.type.${SEED}.test.invert" \
+            --hypo_path="${LANGUAGE}-${ORDER}.txt.type.${SEED}.test.invert" \
             -i \
             > "checkpoints-dakshina/${LANGUAGE}-${ORDER}-test.type.${SEED}.inv.res"
     done
-    rm "${LANGUAGE}_phones.sym" \
+    rm "${LANGUAGE}.${SEED}.phones.sym" \
         "${LANGUAGE}.${SEED}.enc" \
         "${LANGUAGE}.${SEED}.far" \
-        "${LANGUAGE}.txt.type.${SEED}.invert" \
-        "${LANGUAGE}.txt.type.${SEED}.test.invert"
+        "${LANGUAGE}-${ORDER}.txt.type.${SEED}.test.invert" \
+        "${LANGUAGE}-${ORDER}.txt.type.${SEED}.dev.invert"
 # done
