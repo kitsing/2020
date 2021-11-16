@@ -39,6 +39,7 @@ python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 
     # Alignments.
 
     python ./align_dakshina.py \
+        --prefix="${LANG}.${SEED}" \
         --seed="${SEED}" \
         --random_starts="${RANDOM_STARTS}" \
         --tsv_path="${TRAIN_TSV}" \
