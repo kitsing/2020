@@ -28,11 +28,12 @@ python disambiguate.py --input-path-prefix ${DAKSHINA_DATA} --shuffle --seed 42 
     # TRAIN_TSV="${DATA}/train/${LANG}_train.type.tsv"
     DEV_TSV="${DATA}/dev/${LANG}_dev.type.tsv"
     TEST_TSV="${DATA}/test/${LANG}_test.type.tsv"
-    LANGUAGE="$(basename $TRAIN_TSV _train.tsv)"
+    # LANGUAGE="$(basename $TRAIN_TSV _train.tsv)"
+    LANGUAGE=${LANG}
     # Output symbols.
     cut -f2 "${TRAIN_TSV}" "${DEV_TSV}" \
         | ngramsymbols \
-        > "${LANGUAGE}_phones.sym"
+        > "${LANGUAGE}.${SEED}.phones.sym"
     # Alignments.
 
     python ./align_dakshina.py \
