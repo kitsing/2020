@@ -365,7 +365,7 @@ class PairNGramAligner:
 
 
 def main(args: argparse.Namespace) -> None:
-    aligner = PairNGramAligner(prefix=argparse.prefix)
+    aligner = PairNGramAligner(prefix=args.prefix)
     input_token_type = (
         args.input_token_type
         if args.input_token_type in TOKEN_TYPES
