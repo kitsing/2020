@@ -28,8 +28,12 @@ def main():
 def get_wers_cers(l, ngram, num_runs, split):
     wers, cers = [], []
     for run in range(num_runs):
-        dev_fname = f'{l}-{ngram}-{split}.type.{run}.inv.res'
-        wer, cer = get_er(dev_fname)
+        try:
+            dev_fname = f'{l}-{ngram}-{split}.type.{run}.inv.weighted.unweighted.res'
+            wer, cer = get_er(dev_fname)
+        except Exception as e:
+            dev_fname = f'{l}-{ngram}-{split}.{run}.inv.weighted.unweighted.res'
+            wer, cer = get_er(dev_fname)
         wers.append(wer)
         cers.append(cer)
     return cers, wers
