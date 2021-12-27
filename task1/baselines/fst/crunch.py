@@ -25,7 +25,7 @@ class Rewriter:
         fst: pynini.Fst,
         input_token_type: pynini.TokenType,
         output_token_type: pynini.TokenType,
-        n_shortest: int = 10,
+        nshortest: int = 10,
     ):
 
 
@@ -34,7 +34,7 @@ class Rewriter:
             rule=fst,
             input_token_type=input_token_type,
             output_token_type=output_token_type,
-            n_shortest=n_shortest,
+            nshortest=nshortest,
         )
 
     def __call__(self, i: str) -> List[str]:
