@@ -75,6 +75,8 @@ def main(args: argparse.Namespace) -> None:
         output_token_type=output_token_type,
     )
     sum_fst = pynini.arcmap(fst, map_type='to_log')
+    sum_fst.set_input_symbols(input_token_type)
+    sum_fst.set_output_symbols(output_token_type)
     for line in _reader(args.word_path):
         print(line)
         hyps = rewriter(line)
