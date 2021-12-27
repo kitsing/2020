@@ -18,7 +18,6 @@ from tqdm import tqdm
 
 TOKEN_TYPES = ["byte", "utf8"]
 
-
 class Rewriter:
     def __init__(
         self,
