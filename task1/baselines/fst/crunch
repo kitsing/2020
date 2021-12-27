@@ -73,7 +73,7 @@ main() {
         --output_token_type="${OUTPUT_TOKEN_TYPE}" \
         --word_path="${WORDS_PATH}"                \
         ${INVERT_FLAG} \
-        > "${OUTPUT_PATH}"
+        |tee "${OUTPUT_PATH}"
     rm -f "${WORDS_PATH}"
 }
 

@@ -46,8 +46,9 @@ class Rewriter:
 
 def _reader(path: str) -> Iterator[str]:
     """Reads strings from a single-column filepath."""
+    from tqdm import tqdm
     with open(path, "r") as source:
-        for line in source:
+        for line in tqdm(source):
             yield line.rstrip()
 
 
@@ -78,7 +79,8 @@ def main(args: argparse.Namespace) -> None:
     for line in _reader(args.word_path):
         print(line)
         hyps = rewriter(line)
-        for hyp in hyps:
+        from tqdm import tqdm
+        for hyp in tqdm(hyps):
             m = pynini.compose(pynini.compose(line, sum_fst), hyp)
             print(f'{hyp}\t{pynini.shortestdistance(m)}')
         print('')
