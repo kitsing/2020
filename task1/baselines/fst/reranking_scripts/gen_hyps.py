@@ -10,11 +10,11 @@ import functools
 import logging
 import multiprocessing
 
-from typing import Iterator, Tuple, List
+from typing import Iterator, Tuple, List, Optional
 
 import pynini
 from pynini.lib import rewrite
-
+from tqdm import tqdm
 
 TOKEN_TYPES = ["byte", "utf8"]
 
@@ -37,11 +37,12 @@ class Rewriter:
             nshortest=nshortest,
         )
 
-    def __call__(self, i: str) -> List[str]:
+    def __call__(self, i: str, t: Optional[tqdm] = None) -> List[str]:
         try:
+            t.update()
             return self.top_k_rewrite(i)
         except rewrite.Error:
-            return ["<composition failure>",]
+            return ["",]
 
 
 def _reader(path: str) -> Iterator[str]:
@@ -81,14 +82,16 @@ def main(args: argparse.Namespace) -> None:
     jobs = []
     pool = multiprocessing.Pool(args.cores)
     # sum_fst.set_output_symbols(output_token_type)
-    for line in _reader(args.input_path):
-        jobs.append(pool.apply_async(rewriter, (line,)))
-    pool.close()
-    pool.join()
-    with open(args.output_path, mode='w') as w_fh:
-        for line, hyps in zip(_reader(args.input_path), jobs):
-            for hyp in hyps.get():
-                w_fh.write(f'{line}\t{hyp}\n')
+
+    with tqdm() as t:
+        for line in _reader(args.input_path):
+            jobs.append(pool.apply_async(rewriter, (line, t)))
+        pool.close()
+        pool.join()
+        with open(args.output_path, mode='w') as w_fh:
+            for line, hyps in zip(_reader(args.input_path), jobs):
+                for hyp in hyps.get():
+                    w_fh.write(f'{line}\t{hyp}\n')
 
 if __name__ == "__main__":
     logging.basicConfig(level="INFO", format="%(levelname)s: %(message)s")
