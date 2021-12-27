@@ -22,7 +22,8 @@ def main():
         cers_dev, wers_dev = get_wers_cers(l, best_run, num_runs, 'dev')
         cers_test, wers_test = get_wers_cers(l, best_run, num_runs, 'test')
 
-        print(f'{l}\tdev wer mean: {mean(wers_dev)} std: {std(wers_dev)}\ttest wer mean: {mean(wers_test)} std: {std(wers_test)}')
+        print(f'{l}\t{best_run}\tdev wer mean: {mean(wers_dev)} std: {std(wers_dev)}\ttest wer mean: {mean(wers_test)} std: {std(wers_test)}')
+        print(f'{l}\t{best_run}\tdev cer mean: {mean(cers_dev)} std: {std(cers_dev)}\ttest cer mean: {mean(cers_test)} std: {std(cers_test)}')
 
 
 def get_wers_cers(l, ngram, num_runs, split):
