@@ -29,14 +29,14 @@ for ORDER in $(seq 3 9); do
     ./crunch \
         --input_path="${DEV_TSV}" \
         --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
-        --input_token_type="${LANGUAGE}_phones.sym" \
+        --input_token_type="symbols/${LANGUAGE}_phones.sym" \
         --output_path="checkpoints-dakshina/hyps/${LANGUAGE}-${ORDER}.hyps.txt.invert" \
         -i
 
     ./crunch \
         --input_path="${TEST_TSV}" \
         --fst_path="checkpoints-dakshina/${LANGUAGE}-${ORDER}.fst" \
-        --input_token_type="${LANGUAGE}_phones.sym" \
+        --input_token_type="symbols/${LANGUAGE}_phones.sym" \
         -i \
         --output_path="checkpoints-dakshina/hyps/${LANGUAGE}-${ORDER}.hyps.txt.test.invert"
 
