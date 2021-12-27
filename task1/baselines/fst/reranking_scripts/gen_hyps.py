@@ -100,6 +100,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output-path", required=True, help="path to rewrite fst FST"
     )
+    parser.add_argument(
+        "--fst-path", required=True, help="path to rewrite fst FST"
+    )
     parser.add_argument('--invert', action='store_true')
     parser.add_argument(
         "--cores",
