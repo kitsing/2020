@@ -13,7 +13,7 @@ set -eou pipefail
 readonly LANG=${1}
 
 main() {
-    local -r BEST_RUN="$(python gen_best_hyps.py --checkpoint-prefix checkpoint-dakshina --language ${LANG})"
+    local -r BEST_RUN="$(python gen_best_hyps.py --checkpoint-prefix checkpoints-dakshina --language ${LANG})"
     cut -f2 ../../data_dakshina/dev/${LANG}_dev.tsv > checkpoints-dakshina/inputs/${LANG}_dev
     ./reranking_scripts/gen_hyps.py                                   \
         --input-path checkpoints-dakshina/inputs/${LANG}_dev                   \
