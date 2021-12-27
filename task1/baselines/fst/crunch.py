@@ -69,6 +69,8 @@ def main(args: argparse.Namespace) -> None:
         if args.output_token_type in TOKEN_TYPES
         else pynini.SymbolTable.read_text(args.output_token_type)
     )
+    from sys import stderr
+    print(f'{input_token_type}\t{output_token_type}', file=stderr)
 
     rewriter = Rewriter(
         fst,
@@ -77,14 +79,18 @@ def main(args: argparse.Namespace) -> None:
     )
     sum_fst = pynini.arcmap(fst, map_type='to_log')
     sum_fst.set_input_symbols(input_token_type)
-    sum_fst.set_output_symbols(output_token_type)
+    # sum_fst.set_output_symbols(output_token_type)
     for line in _reader(args.word_path):
-        print(line)
         hyps = rewriter(line)
+        print(line)
         from tqdm import tqdm
         for hyp in tqdm(hyps):
-            m = pynini.compose(pynini.compose(line, sum_fst), hyp)
-            print(f'{hyp}\t{pynini.shortestdistance(m)}')
+            with pynini.default_token_type(input_token_type):
+                m = pynini.compose(line,sum_fst)
+            with pynini.default_token_type(output_token_type):
+                m = pynini.compose(m,hyp)
+            # m = pynini.compose(pynini.compose(line, sum_fst), hyp)
+            print(f'{hyp}\t{pynini.shortestdistance(m, reverse=True)[m.start()]}')
         print('')
 
 if __name__ == "__main__":
