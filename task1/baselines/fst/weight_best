@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#$ -wd /home/kitsing/scratch/data/2020/task1/baselines/fst
+#$ -l ram_free=80G,mem_free=80G
+#$ -V
+#$ -N weight_best
+#$ -j y -o $JOB_NAME-$JOB_ID.out
+#$ -M clin103@jhu.edu
+#$ -m e
+
+conda activate task1
+
+set -eou pipefail
+readonly LANG=${1}
+
+main() {
+    local -r BEST_RUN="$(python gen_best_hyps.py --checkpoint-prefix checkpoints-dakshina --language ${LANG})"
+    ./reranking_scripts/weight.py                                   \
+        --input-path checkpoints-dakshina/hyps/${LANG}_dev.hyps \
+        --output-path checkpoints-dakshina/hyps/${LANG}_dev.hyps.ranked \
+        --invert \
+        --input-token-type="symbols/${LANG}.phones.sym"   \
+        --fst-path checkpoints-dakshina/${LANG}-${BEST_RUN}.fst --cores 2
+}
+
+main
